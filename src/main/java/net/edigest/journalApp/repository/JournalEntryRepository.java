@@ -5,6 +5,6 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 
-//  MongoRepository<JournalEntry,ObjectId> ==> this JournalEntry is list or POJO which is stored by db and ObjectI is dataType of Id
+//  MongoRepository<JournalEntry,ObjectId> ==> this JournalEntry is list or POJO which is stored by db and ObjectId is dataType of Id
 public interface JournalEntryRepository extends MongoRepository<JournalEntry, ObjectId> {
 }
