@@ -24,7 +24,9 @@ public class User {
     private String password;
 
     @DBRef  // this annotation will refer/map this user collection to journalEntry (work like a Foreign key in SQL)
+//    this user will only store Id of JournalEntry
     private List<JournalEntry> journalEntries=new ArrayList<>();
+    private List<String> roles;
 
 
 

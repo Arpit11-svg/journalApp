@@ -6,6 +6,7 @@ import net.edigest.journalApp.repository.JournalEntryRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,20 @@ public  class JournalEntryService  {
     @Autowired
     private UserService userService;
 
-    public void saveEntry(JournalEntry journalEntry, String userName){
-        User user=userService.findByUserName(userName);
-        JournalEntry saved = journalEntryRepository.save(journalEntry);// this .save method is of MongoRepository which we have extended in repo class
-        user.getJournalEntries().add(saved); //add into a list
-        userService.saveEntry(user); // now "user" will save in DB
+    @Transactional
+    public void saveNewUser(JournalEntry journalEntry, String userName){
+        try{
+            User user=userService.findByUserName(userName);
+            JournalEntry saved = journalEntryRepository.save(journalEntry);// this .save method is of MongoRepository which we have extended in repo class
+            user.getJournalEntries().add(saved); //add into a list
+            userService.saveUser(user); // now "user" will save in DB
+        }
+        catch(Exception e){
+//            if any error occurred then, throw exception so that it has some knowledge that there is an exception occurs OR  something has gone wrong
+            System.out.println(e);
+            throw new RuntimeException("An error occurred, while saving the entry.");
+        }
+
     }
 
     public void saveEntry(JournalEntry journalEntry){
@@ -38,10 +48,22 @@ public  class JournalEntryService  {
         return journalEntryRepository.findById(id);
     }
 
-    public void deleteById(ObjectId id,String userName){
-        User user=userService.findByUserName(userName);
-        user.getJournalEntries().removeIf(x->x.getId().equals(id));
-        userService.saveEntry(user);
-        journalEntryRepository.deleteById(id);
+    @Transactional
+    public boolean deleteById(ObjectId id,String userName){
+        boolean removed=false;
+        try{
+            User user=userService.findByUserName(userName);
+            removed=user.getJournalEntries().removeIf(x->x.getId().equals(id));
+            if(removed){
+                userService.saveUser(user);
+                journalEntryRepository.deleteById(id);
+            }
+        }
+        catch (Exception e){
+            System.out.println(e);
+            throw new RuntimeException("An error occurred while deleting an entry",e);
+        }
+        return removed;
     }
+
 }

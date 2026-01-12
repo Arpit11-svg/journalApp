@@ -1,11 +1,10 @@
 package net.edigest.journalApp.service;
 
-import net.edigest.journalApp.entity.JournalEntry;
-
 import net.edigest.journalApp.entity.User;
 import net.edigest.journalApp.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,9 +16,19 @@ public  class UserService  {
     @Autowired
     private UserRepository userRepository;  // auto object creation by Spring IOC
 
-    public void saveEntry(User user){
-        userRepository.save(user); // this .save method is of MongoRepository which we have extended in repo class
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public void saveNewUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(List.of("USER"));// save in encoded form in mongoDB Atlas, only new user
+        userRepository.save(user);
     }
+    public void saveUser(User user){
+        userRepository.save(user);
+    }
+
+
 
     public List<User> getAll(){
         return userRepository.findAll();

@@ -1,10 +1,13 @@
 package net.edigest.journalApp.controller;
 
 import net.edigest.journalApp.entity.User;
+import net.edigest.journalApp.repository.UserRepository;
 import net.edigest.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,8 @@ public class UserController {
 
     @Autowired
     public UserService userService;
+    @Autowired
+    public UserRepository userRepository;
 
     @GetMapping
     public List<User> getAllUser(){
@@ -23,21 +28,26 @@ public class UserController {
 
     @PostMapping
     public void createUser(@RequestBody User user){
-        userService.saveEntry(user);
+        userService.saveNewUser(user);
     }
 
-    @PutMapping("/{userName}")
-    public ResponseEntity<?> updateUser(@RequestBody User user,@PathVariable String userName){
+    @PutMapping
+    public ResponseEntity<?> updateUser(@RequestBody User user){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        String userName=authentication.getName();
         User userInDB=userService.findByUserName(userName);
-        if(userInDB!=null){
-            userInDB.setUserName(user.getUserName());
-            userInDB.setPassword(user.getPassword());
-            userService.saveEntry(userInDB);
-        }
+        userInDB.setUserName(user.getUserName());
+        userInDB.setPassword(user.getPassword());
+        userService.saveNewUser(userInDB);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserById(@RequestBody User user){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        userRepository.deleteByUserName(authentication.getName());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
+    }
 }
 
-//CTRL+C  +   CTRL+V
