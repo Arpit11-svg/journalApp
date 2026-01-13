@@ -10,6 +10,7 @@ public interface UserRepository extends MongoRepository<User, ObjectId> {
     User findByUserName(String userName);
     void deleteByUserName(String userName);
 }
+        //Spring Data automatically generates implementations of repository methods at runtime by parsing method names and creating MongoDB queries using dynamic proxies.
 
 
 

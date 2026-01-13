@@ -29,7 +29,7 @@ public  class JournalEntryService  {
             userService.saveUser(user); // now "user" will save in DB
         }
         catch(Exception e){
-//            if any error occurred then, throw exception so that it has some knowledge that there is an exception occurs OR  something has gone wrong
+//            if any error occurred then, throw exception so that @TRANSACTIONAL has some knowledge that there is an exception occurs OR something has gone wrong
             System.out.println(e);
             throw new RuntimeException("An error occurred, while saving the entry.");
         }
@@ -37,7 +37,10 @@ public  class JournalEntryService  {
     }
 
     public void saveEntry(JournalEntry journalEntry){
-         journalEntryRepository.save(journalEntry);
+
+        journalEntryRepository.save(journalEntry);
+
+
     }
 
     public List<JournalEntry> getAll(){

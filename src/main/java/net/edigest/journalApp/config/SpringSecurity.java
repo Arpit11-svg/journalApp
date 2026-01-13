@@ -1,8 +1,12 @@
 package net.edigest.journalApp.config;
 
+import net.edigest.journalApp.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -13,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurity {
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -20,16 +26,37 @@ public class SpringSecurity {
         http
                 .csrf(AbstractHttpConfigurer::disable) //because it is stateless so no any risk
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()   // ✅ allow user
                         .requestMatchers("/journal/**", "/user/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") //give a role of ADMIN
+//                        now only admin can see all users no one else
                         .anyRequest().permitAll()   // MUST be the last
                 )
                 .httpBasic(Customizer.withDefaults()); // this httpBasic is a must for authorization from postman
         return http.build();
     }
+    @Bean
+    public AuthenticationManager authenticationManager(
+            HttpSecurity http,
+            PasswordEncoder passwordEncoder
+    ) throws Exception {
+
+        AuthenticationManagerBuilder authBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+
+        authBuilder
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
+
+        return authBuilder.build();
+    }
+
+    //AuthenticationManagerBuilder: Automatically configure Roles
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+//    NOTE: this passwordEncoder is not just a method, but it is a bean of PasswordEncoder type because of @Bean;
+//    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 }
