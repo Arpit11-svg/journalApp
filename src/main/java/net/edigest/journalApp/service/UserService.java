@@ -1,8 +1,11 @@
 package net.edigest.journalApp.service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.edigest.journalApp.entity.User;
 import net.edigest.journalApp.repository.UserRepository;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -11,7 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public  class UserService  {
+
 
     @Autowired
     private UserRepository userRepository;  // auto object creation by Spring IOC
@@ -32,6 +37,7 @@ public  class UserService  {
             return true;
         }
         catch (Exception e){
+            log.info("Some info print here from LOG");
             return false;
         }
     }

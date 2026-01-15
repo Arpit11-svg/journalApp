@@ -14,6 +14,7 @@ import java.util.Optional;
 @Component
 public  class JournalEntryService  {
 
+
     @Autowired
     private JournalEntryRepository journalEntryRepository;  // auto object creation by Spring IOC
 
