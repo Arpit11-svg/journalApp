@@ -1,8 +1,10 @@
 package net.edigest.journalApp.controller;
 
+import net.edigest.journalApp.api.response.WeatherResponse;
 import net.edigest.journalApp.entity.User;
 import net.edigest.journalApp.repository.UserRepository;
 import net.edigest.journalApp.service.UserService;
+import net.edigest.journalApp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,12 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    public UserService userService;
+    private UserService userService;
     @Autowired
-    public UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private WeatherService weatherService;
 
     @GetMapping
     public List<User> getAllUser(){
@@ -47,7 +52,19 @@ public class UserController {
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
         userRepository.deleteByUserName(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
+    @GetMapping("/greet")
+    public ResponseEntity<?> greeting(){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        WeatherResponse weatherResponse=weatherService.getWeather("Mumbai");
+        String greeting="";
+        if (weatherResponse != null && weatherResponse.getCurrent() != null) {
+            greeting = " | feels like " + weatherResponse.getCurrent().getFeelsLike() + "°C" + " | temperature " + weatherResponse.getCurrent().getTemperature() + "°C"
+            +" |wind speed is "+weatherResponse.getCurrent().getWindSpeed() +" km/h | weather description is  "+weatherResponse.getCurrent().getWeatherDescriptions();}
+
+//        "feelsLike" is an instance of "Current" class and Current is subclass of WeatherResponse class
+        return ResponseEntity.ok("Hi " + authentication.getName() + greeting);
     }
 }
 

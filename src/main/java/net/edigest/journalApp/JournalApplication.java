@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.convert.MongoDatabaseFactoryReferen
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -22,6 +24,12 @@ public class JournalApplication {
 	public PlatformTransactionManager anything(MongoDatabaseFactory dbfactory){
 		return new MongoTransactionManager(dbfactory);
 	}
-	//PlatformTransactionManager anything=new MongoTransactionManager(dbfactory);
+	// Above method is like this==> PlatformTransactionManager anything=new MongoTransactionManager(factory)
+
+	@Bean
+	public RestTemplate restTemplate(){
+		return  new RestTemplate();
+	}
+//	this instance will inject in WeatherService.java
 
 }
