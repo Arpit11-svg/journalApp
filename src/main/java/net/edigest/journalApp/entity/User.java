@@ -20,6 +20,9 @@ public class User {
     @Indexed(unique = true)  //this userName will be unique, and this indexing will be helpful for searching userName; for this we have to add some code in app.context file also
     @NonNull
     private String userName;
+
+    private String email;
+    private boolean sentimentAnalysis;
     @NonNull
     private String password;
 
