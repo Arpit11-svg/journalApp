@@ -14,7 +14,6 @@ import java.util.Optional;
 @Component
 public  class JournalEntryService  {
 
-
     @Autowired
     private JournalEntryRepository journalEntryRepository;  // auto object creation by Spring IOC
 
@@ -31,16 +30,14 @@ public  class JournalEntryService  {
         }
         catch(Exception e){
 //            if any error occurred then, throw exception so that @TRANSACTIONAL has some knowledge that there is an exception occurs OR something has gone wrong
-            System.out.println(e);
+            System.out.println(e.getMessage());
             throw new RuntimeException("An error occurred, while saving the entry.");
         }
 
     }
 
     public void saveEntry(JournalEntry journalEntry){
-
         journalEntryRepository.save(journalEntry);
-
 
     }
 

@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class WeatherService {
+
     @Value("${weather.api.key}")
     private String apiKey;   //MAINTAIN IT later
 
@@ -19,8 +20,6 @@ public class WeatherService {
 
     @Autowired
     private AppCache appCacheObject;
-
-
 
     @Autowired
     private RestTemplate restTemplate;  // Spring provided http request processor class

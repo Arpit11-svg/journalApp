@@ -11,13 +11,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection = "users")
+@Document(collection = "users") //group of documents is collection
 @Data // this will include all required annotations from project lombok
 public class User {
     @Id  // this Id is mapped with id of mongoDB
     private ObjectId id;
 
-    @Indexed(unique = true)  //this userName will be unique, and this indexing will be helpful for searching userName; for this we have to add some code in app.context file also
+    @Indexed(unique = true)  //this userName will be unique, and this indexing will be helpful for searching userName; for this we have to add some code in app.properties file also
     @NonNull
     private String userName;
 
@@ -30,7 +30,4 @@ public class User {
 //    this user will only store Id of JournalEntry
     private List<JournalEntry> journalEntries=new ArrayList<>();
     private List<String> roles;
-
-
-
 }

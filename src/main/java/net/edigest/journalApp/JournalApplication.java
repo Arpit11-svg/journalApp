@@ -16,8 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableTransactionManagement
 public class JournalApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(JournalApplication.class, args);
+	public static void main(String[] args) {SpringApplication.run(JournalApplication.class, args);
 	}
 
 	@Bean

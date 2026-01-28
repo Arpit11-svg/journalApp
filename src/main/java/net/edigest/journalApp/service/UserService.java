@@ -17,7 +17,6 @@ import java.util.Optional;
 @Slf4j
 public  class UserService  {
 
-
     @Autowired
     private UserRepository userRepository;  // auto object creation by Spring IOC
 

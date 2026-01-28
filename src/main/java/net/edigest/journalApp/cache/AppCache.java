@@ -18,17 +18,15 @@ public class AppCache {
     @Autowired
     private ConfigJournalAppRepository configJournalAppRepository;
 
-
     //As bean is created of AppCache, this method will be called immediately (due to @PostConstruct)
     @PostConstruct
     public void init(){
-        appCache=new HashMap<>(); //each we are refreshing this Map
+        appCache=new HashMap<>(); //each time we are refreshing this Map
         List<ConfigJournalAppEntity> all = configJournalAppRepository.findAll();
 
         for(ConfigJournalAppEntity configJournalAppEntity:all){
             appCache.put(configJournalAppEntity.getKey(),configJournalAppEntity.getValue());
         }
         //Only one time, this takes value from DB and stores in Map and gives value as needed, means it works as InMemoryCache
-
     }
 }
