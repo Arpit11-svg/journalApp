@@ -24,11 +24,21 @@ public class WeatherService {
     @Autowired
     private RestTemplate restTemplate;  // Spring provided http request processor class
 
+    @Autowired RedisService redisService;
+
     public WeatherResponse getWeather(String city){
-        String finalAPI=appCacheObject.appCache.get("weather_api").replace("<city>",city).replace("<API_KEY>",apiKey);
-        ResponseEntity<WeatherResponse> response = restTemplate.exchange(finalAPI, HttpMethod.POST, null, WeatherResponse.class);
+        WeatherResponse weatherResponse = redisService.get("Weather_of_" + city, WeatherResponse.class);
+        if(weatherResponse!=null){
+            return weatherResponse; //It is coming from Redis's cache
+        }
+        else{
+            String finalAPI=appCacheObject.appCache.get("weather_api").replace("<city>",city).replace("<API_KEY>",apiKey);
+            ResponseEntity<WeatherResponse> response = restTemplate.exchange(finalAPI, HttpMethod.POST, null, WeatherResponse.class);
 //        we have converted incoming JSON into WeatherResponse.class(POJO)
-        WeatherResponse body = response.getBody();
-        return body;
+            WeatherResponse body = response.getBody();
+
+            redisService.set("weather_of_"+city,body, 300L);//If data is not coming from redis then, set data into, so that next time we can get
+            return body;
+        }
     }
 }
